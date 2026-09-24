@@ -8,10 +8,13 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.urandom(24)
 
+# Force REST transport to prevent gRPC crashes on Render
+os.environ["GOOGLE_API_USE_CLIENT_CERTIFICATE"] = "false"
+
 # Configure Gemini API
 api_key = (os.getenv("GEMINI_API_KEY") or "").strip()
 if api_key:
-    genai.configure(api_key=api_key)
+    genai.configure(api_key=api_key, transport="rest")
 
 # RAG: Function to load local knowledge base text
 def load_knowledge_base():
