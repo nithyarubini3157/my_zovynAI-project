@@ -1,0 +1,9 @@
+CyberZovyn AI Mentor - Custom Cybersecurity Knowledge Base
+
+1. Firewall: A network security device that monitors and filters incoming and outgoing network traffic based on an organization's previously established security policies.
+2. Phishing: A social engineering attack used to steal user data, including login credentials and credit card numbers, through deceptive emails or messages.
+3. Malware: Malicious software designed to damage, disrupt, or gain unauthorized access to a computer system (e.g., Ransomware, Trojans, Spyware).
+4. SQL Injection (SQLi): A web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database.
+5. Zero-Day Vulnerability: A security flaw that is known to the software vendor or security community, but for which no patch or fix exists yet.
+6. Multi-Factor Authentication (MFA): An electronic authentication method in which a user is granted access to a website or application only after successfully presenting two or more pieces of evidence.
+7.
