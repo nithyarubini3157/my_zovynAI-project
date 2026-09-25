@@ -338,19 +338,20 @@ def analyze_phishing():
             return jsonify({"error": "No content provided for phishing analysis."}), 400
 
         sys_instruction = (
-            "You are CyberZovyn AI Phishing Detector. Analyze the given email/URL content.\n"
-            "Provide output in this format:\n"
-            "1. Verdict: [SUSPICIOUS / SAFE / PHISHING]\n"
-            "2. Risk Score: [0 - 100%]\n"
-            "3. Key Red Flags: (Bullet points)\n"
-            "4. Recommendation: (1 sentence advice)"
+            "You are CyberZovyn AI Phishing & Email Authenticator.\n"
+            "Analyze the given text very carefully. If it is a normal workplace email, team update, or polite notice without suspicious links, threats, or fake demands, classify it strictly as SAFE.\n\n"
+            "Provide output strictly in this format:\n"
+            "1. Verdict: [SAFE / SUSPICIOUS / PHISHING]\n"
+            "2. Risk Score: [0% - 100%]\n"
+            "3. Key Red Flags: (If SAFE, state 'None detected. Normal communication.')\n"
+            "4. Recommendation: (1 short sentence advice)"
         )
 
         model = genai.GenerativeModel(
             model_name='gemini-3.5-flash-lite',
             system_instruction=sys_instruction
         )
-        response = model.generate_content(f"Analyze this content: {content}")
+        response = model.generate_content(f"Analyze this content for phishing risk:\n\n{content}")
         return jsonify({"ai_response": response.text})
     except Exception as e:
         return jsonify({"error": f"Phishing Analysis Error: {str(e)}"}), 500
