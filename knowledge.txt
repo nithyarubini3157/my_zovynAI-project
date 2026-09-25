@@ -6,4 +6,12 @@ CyberZovyn AI Mentor - Custom Cybersecurity Knowledge Base
 4. SQL Injection (SQLi): A web security vulnerability that allows an attacker to interfere with the queries that an application makes to its database.
 5. Zero-Day Vulnerability: A security flaw that is known to the software vendor or security community, but for which no patch or fix exists yet.
 6. Multi-Factor Authentication (MFA): An electronic authentication method in which a user is granted access to a website or application only after successfully presenting two or more pieces of evidence.
-7.
+7. Denial of Service (DoS / DDoS): An attack aimed at making a server or network resource unavailable to its intended users by flooding it with excessive traffic. Mitigation: Rate limiting, Cloudflare/DDoS protection, Traffic scrubbing.
+8. Man-in-the-Middle (MitM) Attack: An attack where the attacker secretly relays and possibly alters the communications between two parties who believe they are directly communicating with each other. Mitigation: HTTPS (SSL/TLS), End-to-End Encryption, VPNs.
+9. Cross-Site Scripting (XSS): A vulnerability that allows attackers to inject malicious scripts into web pages viewed by other users. Mitigation: Proper input sanitization, Output encoding, Content Security Policy (CSP).
+10. Cross-Site Request Forgery (CSRF): An attack that forces an end user to execute unwanted actions on a web application in which they're currently authenticated. Mitigation: Anti-CSRF Tokens, SameSite cookie attributes.
+11. Public Key Infrastructure (PKI) & Encryption: Symmetric Encryption uses a single key for encryption and decryption (e.g., AES). Asymmetric Encryption uses a public key to encrypt and a private key to decrypt (e.g., RSA).
+12. Port Scanning & Reconnaissance: Nmap commands: 'nmap -sV -sC <target>' for service and script detection. Common ports: Port 21 (FTP), Port 22 (SSH), Port 53 (DNS), Port 80 (HTTP), Port 443 (HTTPS).
+13. Burp Suite & Web Application Testing: Used for capturing, inspecting, and modifying HTTP/HTTPS requests and responses between a browser and target server.
+14. Wireshark Packet Filtering: Useful display filters: 'http', 'tcp.flags.syn == 1', 'dns', 'ip.addr == X.X.X.X' to isolate specific protocol traffic.
+15. Incident Response Cycle: Preparation -> Identification -> Containment -> Eradication -> Recovery -> Lessons Learned.
