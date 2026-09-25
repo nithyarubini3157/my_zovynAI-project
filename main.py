@@ -36,7 +36,7 @@ HTML_TEMPLATE = """
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0f; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { width: 100%; max-width: 700px; background: #12131c; border-radius: 16px; display: flex; flex-direction: column; height: 88vh; border: 1px solid #00f0ff33; box-shadow: 0 0 30px rgba(0, 240, 255, 0.15); }
+        .container { width: 100%; max-width: 750px; background: #12131c; border-radius: 16px; display: flex; flex-direction: column; height: 90vh; border: 1px solid #00f0ff33; box-shadow: 0 0 30px rgba(0, 240, 255, 0.15); }
         .header { padding: 18px 24px; background: #1a1c29; border-bottom: 1px solid #00f0ff33; display: flex; justify-content: space-between; align-items: center; border-radius: 16px 16px 0 0; }
         .header h2 { font-size: 20px; color: #00f0ff; text-shadow: 0 0 10px rgba(0, 240, 255, 0.5); }
         .header-right { display: flex; align-items: center; gap: 12px; }
@@ -48,16 +48,20 @@ HTML_TEMPLATE = """
         .clear-btn { background: #ff3344; color: white; border: none; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: bold; transition: 0.3s; }
         .clear-btn:hover { background: #ff1a2d; transform: translateY(-2px); }
         .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; }
-        .message { max-width: 80%; padding: 14px 18px; border-radius: 14px; font-size: 14px; line-height: 1.6; word-wrap: break-word; }
+        .message { max-width: 85%; padding: 14px 18px; border-radius: 14px; font-size: 14px; line-height: 1.6; word-wrap: break-word; }
         .user-msg { align-self: flex-end; background: linear-gradient(135deg, #007bff, #7000ff); color: white; border-bottom-right-radius: 2px; box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3); }
         .ai-msg { align-self: flex-start; background: #1a1c29; color: #d1d5db; border-bottom-left-radius: 2px; border: 1px solid #00f0ff22; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); }
         .ai-msg p { margin-bottom: 8px; }
         .ai-msg p:last-child { margin-bottom: 0; }
-        .input-area { padding: 18px; background: #1a1c29; display: flex; gap: 12px; border-top: 1px solid #00f0ff22; border-radius: 0 0 16px 16px; }
+        .input-area { padding: 18px; background: #1a1c29; display: flex; gap: 12px; border-top: 1px solid #00f0ff22; border-radius: 0 0 16px 16px; flex-direction: column; }
+        .input-row { display: flex; gap: 10px; }
         input { flex: 1; padding: 14px 18px; border-radius: 10px; border: 1px solid #00f0ff33; background: #0a0a0f; color: white; outline: none; font-size: 14px; transition: 0.3s; }
         input:focus { border-color: #00f0ff; box-shadow: 0 0 10px rgba(0, 240, 255, 0.3); }
         button.send-btn { padding: 14px 24px; background: #00f0ff; color: #0a0a0f; border: none; border-radius: 10px; cursor: pointer; font-weight: bold; transition: 0.3s; box-shadow: 0 0 12px rgba(0, 240, 255, 0.4); }
         button.send-btn:hover { background: #33f3ff; transform: scale(1.03); }
+        .tools-bar { display: flex; gap: 8px; flex-wrap: wrap; }
+        .tool-chip { background: #222538; color: #00f0ff; border: 1px solid #00f0ff44; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .tool-chip:hover { background: #00f0ff22; border-color: #00f0ff; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(5, 5, 10, 0.9); display: flex; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(5px); }
         .modal-card { background: #1a1c29; padding: 30px; border-radius: 16px; text-align: center; border: 1px solid #00f0ff44; max-width: 400px; width: 90%; box-shadow: 0 0 25px rgba(0, 240, 255, 0.2); }
@@ -93,11 +97,18 @@ HTML_TEMPLATE = """
             </div>
         </div>
         <div class="chat-box" id="chatBox">
-            <div class="message ai-msg">Welcome Agent! I am <b>CyberZovyn AI</b>. Knowledge Base Loaded! Ask any concept or hit <b>Start Quiz</b>! ⚡</div>
+            <div class="message ai-msg">Welcome Agent! I am <b>CyberZovyn AI</b>. Knowledge Base Loaded! Select a tool below or ask any concept! ⚡</div>
         </div>
         <div class="input-area">
-            <input type="text" id="userMsg" placeholder="Ask a question or type your quiz option..." onkeypress="handleKeyPress(event)" />
-            <button class="send-btn" onclick="sendMsg()">Send</button>
+            <div class="tools-bar">
+                <button class="tool-chip" onclick="triggerPhishingPrompt()">🎣 Phishing Analyzer</button>
+                <button class="tool-chip" onclick="triggerLogPrompt()">📜 Log Analyzer</button>
+                <button class="tool-chip" onclick="triggerVulnPrompt()">🛡️ Vuln Explainer</button>
+            </div>
+            <div class="input-row">
+                <input type="text" id="userMsg" placeholder="Ask a question or paste text to analyze..." onkeypress="handleKeyPress(event)" />
+                <button class="send-btn" onclick="sendMsg()">Send</button>
+            </div>
         </div>
     </div>
 
@@ -105,6 +116,7 @@ HTML_TEMPLATE = """
         let chatHistory = [];
         let userScore = 0;
         let isQuizActive = false;
+        let currentMode = 'chat';
 
         function playSound(type) {
             try {
@@ -146,6 +158,21 @@ HTML_TEMPLATE = """
             if (e.key === 'Enter') sendMsg();
         }
 
+        function triggerPhishingPrompt() {
+            currentMode = 'phishing';
+            appendMessage("Mode: Phishing Analyzer 🎣. Paste an email body or URL below to analyze.", 'ai-msg');
+        }
+
+        function triggerLogPrompt() {
+            currentMode = 'log';
+            appendMessage("Mode: Log Analyzer 📜. Paste server/firewall log lines below.", 'ai-msg');
+        }
+
+        function triggerVulnPrompt() {
+            currentMode = 'vuln';
+            appendMessage("Mode: Vulnerability Explainer 🛡️. Enter CVE ID or vulnerability name (e.g. SQL Injection, CVE-2021-44228).", 'ai-msg');
+        }
+
         async function sendMsg(overrideMsg = null) {
             const msgInput = document.getElementById('userMsg');
             const msg = overrideMsg || msgInput.value.trim();
@@ -156,15 +183,30 @@ HTML_TEMPLATE = """
             appendMessage(msg, 'user-msg');
             if(!overrideMsg) msgInput.value = '';
 
-            const loadingDiv = appendMessage("Thinking...", 'ai-msg');
+            const loadingDiv = appendMessage("Analyzing...", 'ai-msg');
+
+            let endpoint = '/chat';
+            let reqBody = { message: msg, history: chatHistory.slice(-6), score: userScore };
+
+            if(currentMode === 'phishing') {
+                endpoint = '/analyze_phishing';
+                reqBody = { content: msg };
+                currentMode = 'chat';
+            } else if(currentMode === 'log') {
+                endpoint = '/analyze_logs';
+                reqBody = { logs: msg };
+                currentMode = 'chat';
+            } else if(currentMode === 'vuln') {
+                endpoint = '/explain_vulnerability';
+                reqBody = { vulnerability: msg };
+                currentMode = 'chat';
+            }
 
             try {
-                const limitedHistory = chatHistory.slice(-6);
-
-                const res = await fetch('/chat', {
+                const res = await fetch(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg, history: limitedHistory, score: userScore })
+                    body: JSON.stringify(reqBody)
                 });
                 const data = await res.json();
                 
@@ -172,22 +214,20 @@ HTML_TEMPLATE = """
                     const rawHTML = marked.parse(data.ai_response);
                     loadingDiv.innerHTML = DOMPurify.sanitize(rawHTML);
 
-                    chatHistory.push({ role: 'user', parts: [msg] });
-                    chatHistory.push({ role: 'model', parts: [data.ai_response] });
+                    if(endpoint === '/chat') {
+                        chatHistory.push({ role: 'user', parts: [msg] });
+                        chatHistory.push({ role: 'model', parts: [data.ai_response] });
 
-                    const trimmedResponse = data.ai_response.trim().toUpperCase();
-                    
-                    if(trimmedResponse.startsWith('CORRECT!') || trimmedResponse.startsWith('INCORRECT!')) {
-                        if(trimmedResponse.startsWith('CORRECT!') && !trimmedResponse.startsWith('INCORRECT!')) {
-                            playSound('success');
-                            userScore += 10;
-                            updateScoreAndLevel();
-                        }
-                        
-                        if(isQuizActive) {
-                            setTimeout(() => {
-                                generateNextQuizAuto();
-                            }, 2000);
+                        const trimmedResponse = data.ai_response.trim().toUpperCase();
+                        if(trimmedResponse.startsWith('CORRECT!') || trimmedResponse.startsWith('INCORRECT!')) {
+                            if(trimmedResponse.startsWith('CORRECT!') && !trimmedResponse.startsWith('INCORRECT!')) {
+                                playSound('success');
+                                userScore += 10;
+                                updateScoreAndLevel();
+                            }
+                            if(isQuizActive) {
+                                setTimeout(() => { generateNextQuizAuto(); }, 2000);
+                            }
                         }
                     }
                 } else {
@@ -232,6 +272,7 @@ HTML_TEMPLATE = """
             chatHistory = [];
             userScore = 0;
             isQuizActive = false;
+            currentMode = 'chat';
             updateScoreAndLevel();
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '<div class="message ai-msg">Chat cleared! Ask me anything about cybersecurity.</div>';
@@ -262,9 +303,7 @@ def chat():
         if not os.getenv("GEMINI_API_KEY"):
             return jsonify({"error": "GEMINI_API_KEY is missing in .env file!"}), 400
 
-        # RAG Implementation: Load knowledge context
         knowledge_context = load_knowledge_base()
-
         difficulty = "Advanced" if score >= 30 else "Beginner/Intermediate"
 
         sys_instruction = (
@@ -290,6 +329,82 @@ def chat():
     except Exception as e:
         return jsonify({"error": f"Server error: {str(e)}"}), 500
 
+@app.route("/analyze_phishing", methods=["POST"])
+def analyze_phishing():
+    try:
+        data = request.get_json() or {}
+        content = data.get("content", "")
+        if not content:
+            return jsonify({"error": "No content provided for phishing analysis."}), 400
+
+        sys_instruction = (
+            "You are CyberZovyn AI Phishing Detector. Analyze the given email/URL content.\n"
+            "Provide output in this format:\n"
+            "1. Verdict: [SUSPICIOUS / SAFE / PHISHING]\n"
+            "2. Risk Score: [0 - 100%]\n"
+            "3. Key Red Flags: (Bullet points)\n"
+            "4. Recommendation: (1 sentence advice)"
+        )
+
+        model = genai.GenerativeModel(
+            model_name='gemini-3.5-flash-lite',
+            system_instruction=sys_instruction
+        )
+        response = model.generate_content(f"Analyze this content: {content}")
+        return jsonify({"ai_response": response.text})
+    except Exception as e:
+        return jsonify({"error": f"Phishing Analysis Error: {str(e)}"}), 500
+
+@app.route("/analyze_logs", methods=["POST"])
+def analyze_logs():
+    try:
+        data = request.get_json() or {}
+        logs = data.get("logs", "")
+        if not logs:
+            return jsonify({"error": "No logs provided."}), 400
+
+        sys_instruction = (
+            "You are CyberZovyn AI Log Analyzer. Analyze the provided server/firewall log lines.\n"
+            "Provide output in this format:\n"
+            "1. Attack Type Detected: (e.g. Brute Force, SQLi, Port Scan, Normal Traffic)\n"
+            "2. Threat Level: [LOW / MEDIUM / HIGH / CRITICAL]\n"
+            "3. Suspicious IP / Indicators: (List them)\n"
+            "4. Mitigation Step: (Short action step)"
+        )
+
+        model = genai.GenerativeModel(
+            model_name='gemini-3.5-flash-lite',
+            system_instruction=sys_instruction
+        )
+        response = model.generate_content(f"Analyze these log lines:\n{logs}")
+        return jsonify({"ai_response": response.text})
+    except Exception as e:
+        return jsonify({"error": f"Log Analysis Error: {str(e)}"}), 500
+
+@app.route("/explain_vulnerability", methods=["POST"])
+def explain_vulnerability():
+    try:
+        data = request.get_json() or {}
+        vuln = data.get("vulnerability", "")
+        if not vuln:
+            return jsonify({"error": "No vulnerability name provided."}), 400
+
+        sys_instruction = (
+            "You are CyberZovyn AI Vulnerability Explainer.\n"
+            "Provide a simple 3-part breakdown:\n"
+            "1. What it is (simple definition)\n"
+            "2. Impact (what an attacker can do)\n"
+            "3. How to fix/remediate (best practice)"
+        )
+
+        model = genai.GenerativeModel(
+            model_name='gemini-3.5-flash-lite',
+            system_instruction=sys_instruction
+        )
+        response = model.generate_content(f"Explain vulnerability: {vuln}")
+        return jsonify({"ai_response": response.text})
+    except Exception as e:
+        return jsonify({"error": f"Vulnerability Explainer Error: {str(e)}"}), 500
 
 if __name__ == "__main__":
     app.run(port=8000, debug=True)
