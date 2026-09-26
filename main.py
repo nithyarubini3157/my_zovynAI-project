@@ -18,132 +18,202 @@ HTML_TEMPLATE = """
     <title>CyberZovyn AI Mentor</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
     <style>
+        * { box-sizing: border-box; }
         body {
-            background-color: #0d1117;
-            color: #c9d1d9;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #0b0f19;
+            color: #e2e8f0;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
-            flex-direction: column;
+            justify-content: center;
             align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            width: 100%;
+            max-width: 900px;
+            background: #111827;
+            border: 1px solid #1f2937;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
         }
         .header {
-            width: 100%;
-            max-width: 800px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 2px solid #30363d;
-            padding-bottom: 10px;
-            margin-bottom: 20px;
+            border-bottom: 1px solid #1f2937;
+            padding-bottom: 16px;
         }
         .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #58a6ff;
+            font-size: 22px;
+            font-weight: 700;
+            color: #38bdf8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         .stats {
             display: flex;
-            gap: 15px;
+            gap: 10px;
+            align-items: center;
         }
         .badge {
-            background-color: #238636;
+            background-color: #ef4444;
             color: white;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 13px;
+            text-transform: uppercase;
         }
         .score {
-            background-color: #1f6feb;
+            background-color: #0284c7;
             color: white;
-            padding: 5px 12px;
+            padding: 6px 14px;
             border-radius: 20px;
-            font-weight: bold;
-            font-size: 14px;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        .start-btn {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
         }
         .chat-box {
-            width: 100%;
-            max-width: 800px;
-            height: 450px;
-            background-color: #161b22;
-            border: 1px solid #30363d;
+            height: 420px;
+            background-color: #0b0f19;
+            border: 1px solid #1f2937;
             border-radius: 8px;
             overflow-y: auto;
-            padding: 15px;
-            box-sizing: border-box;
-            margin-bottom: 15px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         .message {
-            margin-bottom: 15px;
             padding: 12px 16px;
-            border-radius: 6px;
+            border-radius: 8px;
             line-height: 1.5;
+            max-width: 85%;
+            font-size: 15px;
         }
         .user-msg {
-            background-color: #21262d;
-            border-left: 4px solid #58a6ff;
+            background-color: #1d4ed8;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 2px;
         }
         .ai-msg {
-            background-color: #0d1117;
-            border-left: 4px solid #238636;
+            background-color: #1f2937;
+            color: #e2e8f0;
+            align-self: flex-start;
+            border-bottom-left-radius: 2px;
+            border-left: 4px solid #38bdf8;
         }
-        .level-up-msg {
-            background-color: #1c2128;
-            border: 2px solid #f1e05a;
-            border-left: 6px solid #e3b341;
-            box-shadow: 0 0 10px rgba(241, 224, 90, 0.3);
+        .level-banner {
+            background: linear-gradient(135deg, #1e1b4b, #311b92);
+            border: 2px solid #a855f7;
+            color: #f3e8ff;
+            align-self: center;
+            width: 100%;
+            text-align: center;
+            padding: 14px;
+            border-radius: 8px;
+            box-shadow: 0 0 15px rgba(168, 85, 247, 0.4);
+        }
+        .tools-container {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .tool-btn {
+            background-color: #1f2937;
+            border: 1px solid #374151;
+            color: #38bdf8;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+        .tool-btn:hover {
+            background-color: #374151;
+            border-color: #38bdf8;
         }
         .input-container {
-            width: 100%;
-            max-width: 800px;
             display: flex;
             gap: 10px;
         }
         input[type="text"] {
             flex: 1;
-            padding: 12px;
-            background-color: #161b22;
-            border: 1px solid #30363d;
-            border-radius: 6px;
-            color: #c9d1d9;
-            font-size: 16px;
+            padding: 12px 16px;
+            background-color: #0b0f19;
+            border: 1px solid #374151;
+            border-radius: 8px;
+            color: #e2e8f0;
+            font-size: 15px;
+            outline: none;
         }
-        button {
+        input[type="text"]:focus {
+            border-color: #38bdf8;
+        }
+        .send-btn {
             padding: 12px 24px;
-            background-color: #238636;
-            color: white;
+            background-color: #38bdf8;
+            color: #0f172a;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: bold;
-            font-size: 16px;
+            font-weight: 700;
+            font-size: 15px;
         }
-        button:hover {
-            background-color: #2ea043;
+        .send-btn:hover {
+            background-color: #0284c7;
+            color: white;
         }
     </style>
 </head>
 <body>
 
-<div class="header">
-    <div class="title">CyberZovyn AI Mentor 🤖</div>
-    <div class="stats">
-        <span id="levelDisplay" class="badge">ROOKIE</span>
-        <span id="scoreDisplay" class="score">Score: 0</span>
+<div class="container">
+    <div class="header">
+        <div class="title">CyberZovyn AI Mentor 🤖</div>
+        <div class="stats">
+            <span id="levelDisplay" class="badge">ROOKIE</span>
+            <span id="scoreDisplay" class="score">Score: 0</span>
+            <button class="start-btn" onclick="startQuiz()">🎯 Start Quiz</button>
+        </div>
     </div>
-</div>
 
-<div id="chatBox" class="chat-box">
-    <div class="message ai-msg">
-        <strong>CyberZovyn AI:</strong> Welcome Agent! Ready to hack your way to the top? Type <strong>"start quiz"</strong> to test your cybersecurity skills!
+    <div id="chatBox" class="chat-box">
+        <div class="message ai-msg">
+            Welcome Agent! I am <strong>CyberZovyn AI</strong>. Knowledge Base Loaded! Select a tool below or ask any concept! ⚡
+        </div>
     </div>
-</div>
 
-<div class="input-container">
-    <input type="text" id="userInput" placeholder="Type your answer (e.g. A, B, C, D) or ask a question..." onkeydown="if(event.key==='Enter') sendMessage()">
-    <button onclick="sendMessage()">Send</button>
+    <div class="tools-container">
+        <button class="tool-btn" onclick="sendToolPrompt('Phishing Analyzer')">🔍 Phishing Analyzer</button>
+        <button class="tool-btn" onclick="sendToolPrompt('Log Analyzer')">📊 Log Analyzer</button>
+        <button class="tool-btn" onclick="sendToolPrompt('Vuln Explainer')">🛡️ Vuln Explainer</button>
+    </div>
+
+    <div class="input-container">
+        <input type="text" id="userInput" placeholder="Ask a question or paste text to analyze..." onkeydown="if(event.key==='Enter') sendMessage()">
+        <button class="send-btn" onclick="sendMessage()">Send</button>
+    </div>
 </div>
 
 <script>
@@ -174,21 +244,20 @@ HTML_TEMPLATE = """
 
         levelBadge.innerText = currentLevel;
 
-        // Catchy Level Up Banner with Level Name
         if(currentLevel !== previousLevel) {
             previousLevel = currentLevel;
             triggerConfetti();
 
             let catchyBanner = "";
             if(currentLevel === 'CYBER SCOUT') {
-                catchyBanner = "⚡ **EXCELLENT PERFORMANCE! LEVEL UP UNLOCKED!** ⚡<br>🎉 **NEW BADGE ACHIEVED: [ CYBER SCOUT ]** 🎉<br>*Unstoppable drive, Agent! You have officially stepped out of the rookie zone!* 🔥";
+                catchyBanner = "⚡ <strong>EXCELLENT PERFORMANCE! LEVEL UP UNLOCKED!</strong> ⚡<br>🎉 <strong>NEW BADGE ACHIEVED: [ CYBER SCOUT ]</strong> 🎉<br><em>Unstoppable drive, Agent! You have officially stepped out of the rookie zone!</em> 🔥";
             } else if(currentLevel === 'PRO HACKER') {
-                catchyBanner = "🔥 **OUTSTANDING SKILLS! LEVEL UP UNLOCKED!** 🔥<br>🎉 **NEW BADGE ACHIEVED: [ PRO HACKER ]** 🎉<br>*Brilliant mind at work! You are decoding threats like an absolute pro!* 🎯";
+                catchyBanner = "🔥 <strong>OUTSTANDING SKILLS! LEVEL UP UNLOCKED!</strong> 🔥<br>🎉 <strong>NEW BADGE ACHIEVED: [ PRO HACKER ]</strong> 🎉<br><em>Brilliant mind at work! You are decoding threats like an absolute pro!</em> 🎯";
             } else if(currentLevel === 'CYBER ELITE') {
-                catchyBanner = "👑 **LEGENDARY STATUS ACHIEVED! LEVEL UP UNLOCKED!** 👑<br>🎉 **NEW BADGE ACHIEVED: [ CYBER ELITE ]** 🎉<br>*Masterclass performance! You have reached the ultimate pinnacle of cyber defense!* 🏆";
+                catchyBanner = "👑 <strong>LEGENDARY STATUS ACHIEVED! LEVEL UP UNLOCKED!</strong> 👑<br>🎉 <strong>NEW BADGE ACHIEVED: [ CYBER ELITE ]</strong> 🎉<br><em>Masterclass performance! You have reached the ultimate pinnacle of cyber defense!</em> 🏆";
             }
 
-            appendCustomMessage(catchyBanner, 'level-up-msg');
+            appendCustomMessage(catchyBanner, 'level-banner');
         }
     }
 
@@ -208,6 +277,16 @@ HTML_TEMPLATE = """
         msgDiv.innerHTML = htmlContent;
         chatBox.appendChild(msgDiv);
         chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function startQuiz() {
+        document.getElementById('userInput').value = "start quiz";
+        sendMessage();
+    }
+
+    function sendToolPrompt(toolName) {
+        document.getElementById('userInput').value = `Explain ${toolName} and give me a question on it`;
+        sendMessage();
     }
 
     async function sendMessage() {
@@ -233,7 +312,7 @@ HTML_TEMPLATE = """
 
             appendMessage(`<strong>CyberZovyn AI:</strong> ${data.reply}`, 'ai-msg');
         } catch(e) {
-            appendMessage(`<strong>CyberZovyn AI:</strong> Error connecting to server!`, 'ai-msg');
+            appendMessage(`Unable to fetch response.`, 'ai-msg');
         }
     }
 </script>
@@ -256,7 +335,8 @@ def chat():
     if not GEMINI_API_KEY:
         return jsonify({'reply': 'GEMINI_API_KEY environment variable is not configured!'})
 
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    # Exact Gemini Model Requested
+    model = genai.GenerativeModel('gemini-3.5-flash-lite')
 
     system_prompt = f"""
     You are CyberZovyn AI Mentor, an interactive cybersecurity quiz tutor.
@@ -264,9 +344,9 @@ def chat():
 
     RULES:
     1. If the user provides a quiz option answer (A, B, C, or D):
-       - If Correct: Start response with "CORRECT! 🎉" followed by a short 1-line explanation. Add a catchy compliment like "Sharpshooter moves!", "Bulletproof defense!", or "Flawless execution!".
-       - If Incorrect: Start response with "NOT QUITE! 💪" followed by a warm, highly motivating message like "Great attempt, Agent! Every mistake is a system upgrade!", "Don't back down! Learn the fix and hit back stronger!", or "Shake it off, Agent! True hackers learn from errors!". Then explain the correct answer clearly.
-       - Then generate 1 new unique multiple-choice question (A, B, C, D) based on cybersecurity concepts appropriate for level {level}.
+       - If Correct: Start response strictly with "CORRECT! 🎉" followed by a short explanation. Add a catchy praise like "Sharpshooter moves!", "Bulletproof defense!", or "Flawless execution!".
+       - If Incorrect: Start response strictly with "NOT QUITE! 💪" followed by a warm motivational phrase like "Great attempt, Agent! Every mistake is a system upgrade!", "Don't back down! Learn the fix and hit back stronger!", or "Shake it off! True hackers learn from errors!". Then explain the correct answer clearly.
+       - Then generate 1 new unique multiple-choice question (A, B, C, D) based on cybersecurity concepts for level {level}.
 
     2. If user types "start quiz" or asks a question, answer engagingly and present a quiz question.
     """
