@@ -161,8 +161,11 @@ HTML_TEMPLATE = """
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ allow_quiz: allow })
                 });
-            } catch (e) { console.error(e); }
-            document.getElementById('quizModal').style.display = 'none';
+            } catch (e) { 
+                console.error("Quiz preference error:", e); 
+            } finally {
+                document.getElementById('quizModal').style.display = 'none';
+            }
         }
 
         function handleKeyPress(e) {
@@ -321,9 +324,12 @@ def home():
 
 @app.route("/set_quiz_preference", methods=["POST"])
 def set_quiz_preference():
-    data = request.get_json() or {}
-    session['allow_quiz'] = data.get('allow_quiz', False)
-    return jsonify({"status": "success", "allow_quiz": session['allow_quiz']})
+    try:
+        data = request.get_json() or {}
+        session['allow_quiz'] = data.get('allow_quiz', False)
+        return jsonify({"status": "success", "allow_quiz": session['allow_quiz']}), 200
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route("/chat", methods=["POST"])
 def chat():
