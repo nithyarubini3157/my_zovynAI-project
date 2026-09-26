@@ -206,7 +206,8 @@ HTML_TEMPLATE = """
                 message: msg, 
                 history: chatHistory.slice(-6), 
                 score: userScore,
-                allow_quiz: allowAutoQuiz
+                allow_quiz: allowAutoQuiz,
+                is_quiz_mode: isQuizActive
             };
 
             if(currentMode === 'phishing') {
@@ -247,7 +248,7 @@ HTML_TEMPLATE = """
                                 updateScoreAndLevel();
                             }
                             
-                            // Continue continuous quiz ONLY if 'Start Quiz' button was explicitly activated
+                            // "Start Quiz" மூலம் இயக்கப்பட்டிருந்தால் மட்டுமே அடுத்த கேள்விக்குச் செல்லும்
                             if(isQuizActive) {
                                 setTimeout(() => { generateNextQuizAuto(); }, 2000);
                             }
@@ -282,7 +283,7 @@ HTML_TEMPLATE = """
         }
 
         function generateQuiz() {
-            isQuizActive = true; // Enables continuous quiz mode
+            isQuizActive = true; // Continuous Quiz Mode-ஐ ஆன் செய்யும்
             generateNextQuizAuto();
         }
 
@@ -314,7 +315,7 @@ HTML_TEMPLATE = """
         function clearChat() {
             chatHistory = [];
             userScore = 0;
-            isQuizActive = false; // Disable continuous quiz mode on clear
+            isQuizActive = false; // Clear செய்யும் போது continuous quiz-ஐ முடக்கும்
             currentMode = 'chat';
             previousLevel = 'Rookie';
             updateScoreAndLevel();
@@ -347,6 +348,7 @@ def chat():
         history = data.get("history", [])
         score = data.get("score", 0)
         allow_quiz = data.get("allow_quiz", session.get('allow_quiz', False))
+        is_quiz_mode = data.get("is_quiz_mode", False)
 
         if not os.getenv("GEMINI_API_KEY"):
             return jsonify({"error": "GEMINI_API_KEY is missing in .env file!"}), 400
@@ -365,10 +367,16 @@ def chat():
         else:
             difficulty = "Easy Fundamentals"
 
+        # பயனாளர் பதிலளிக்கிறாரா (Option A, B, C, D அல்லது குறுகிய பதில்கள்) என செக் செய்தல்
+        msg_clean = message.strip().lower()
+        is_direct_quiz_req = msg_clean.startswith("generate 1 unique")
+        is_simple_answer = len(msg_clean) <= 15 or msg_clean in ['a', 'b', 'c', 'd', 'option a', 'option b', 'option c', 'option d']
+
         quiz_instruction = ""
-        if allow_quiz and not message.lower().startswith("generate 1 unique"):
+        # 1) Start Quiz பயன்முறையில் இருந்தால் அல்லது 2) சாதாரண கேள்வி கேட்டு, அது ஒரு பதிலாக இல்லையெனில் மட்டும் 1 குவிஸ் சேர்க்கப்படும்.
+        if (is_quiz_mode or (allow_quiz and not is_simple_answer)) and not is_direct_quiz_req:
             quiz_instruction = (
-                "\n\nQUIZ RULE: After answering the user's question, IMMEDIATELY append 1 relevant "
+                "\n\nQUIZ RULE: After answering the user's question, IMMEDIATELY append EXACTLY 1 relevant "
                 "multiple-choice cybersecurity quiz question (with options A, B, C, D) based on your answer/topic. "
                 "Do NOT reveal the correct answer yet."
             )
@@ -380,8 +388,9 @@ def chat():
             f"--- KNOWLEDGE BASE ---\n{knowledge_context}\n----------------------\n"
             "Answer concisely in max 2-3 short sentences.\n"
             "If evaluating a quiz answer:\n"
-            "If right, strictly start with 'CORRECT!'.\n"
-            "If wrong, strictly start with 'INCORRECT!', give the correct answer, AND add a 1-sentence recommendation on what topic to study."
+            "- If right, strictly start with 'CORRECT!' and explain briefly.\n"
+            "- If wrong, strictly start with 'INCORRECT!', give the correct answer, AND add a 1-sentence recommendation on what topic to study.\n"
+            "IMPORTANT: When evaluating an answer and 'Start Quiz' mode is OFF, DO NOT attach any new quiz question afterwards."
             f"{quiz_instruction}"
         )
 
