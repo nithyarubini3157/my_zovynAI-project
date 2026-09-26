@@ -33,6 +33,8 @@ HTML_TEMPLATE = """
     <title>CyberZovyn AI Mentor</title>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js"></script>
+    <!-- Canvas Confetti Library for Celebration Effects -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0a0a0f; color: #e0e0e0; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
@@ -117,6 +119,7 @@ HTML_TEMPLATE = """
         let userScore = 0;
         let isQuizActive = false;
         let currentMode = 'chat';
+        let previousLevel = 'Rookie';
 
         function playSound(type) {
             try {
@@ -141,6 +144,14 @@ HTML_TEMPLATE = """
                     osc.stop(ctx.currentTime + 0.3);
                 }
             } catch(e){}
+        }
+
+        function triggerConfetti() {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
         }
 
         async function setQuizPreference(allow) {
@@ -222,7 +233,7 @@ HTML_TEMPLATE = """
                         if(trimmedResponse.startsWith('CORRECT!') || trimmedResponse.startsWith('INCORRECT!')) {
                             if(trimmedResponse.startsWith('CORRECT!') && !trimmedResponse.startsWith('INCORRECT!')) {
                                 playSound('success');
-                                userScore += 10;
+                                userScore += 2; // +2 marks per question
                                 updateScoreAndLevel();
                             }
                             if(isQuizActive) {
@@ -242,10 +253,21 @@ HTML_TEMPLATE = """
         function updateScoreAndLevel() {
             document.getElementById('scoreDisplay').innerText = `Score: ${userScore}`;
             const levelBadge = document.getElementById('levelDisplay');
-            if(userScore >= 50) levelBadge.innerText = 'Cyber Elite';
-            else if(userScore >= 30) levelBadge.innerText = 'Pro Hacker';
-            else if(userScore >= 10) levelBadge.innerText = 'Cyber Scout';
-            else levelBadge.innerText = 'Rookie';
+            let currentLevel = 'Rookie';
+
+            if(userScore >= 30) currentLevel = 'Cyber Elite';
+            else if(userScore >= 20) currentLevel = 'Pro Hacker';
+            else if(userScore >= 10) currentLevel = 'Cyber Scout';
+            else currentLevel = 'Rookie';
+
+            levelBadge.innerText = currentLevel;
+
+            // Trigger Confetti Blast and Motivational Banner on Level Promotion
+            if(currentLevel !== previousLevel) {
+                previousLevel = currentLevel;
+                triggerConfetti();
+                appendMessage(`🎉 **LEVEL UP UNLOCKED!** Excellent work! You have been promoted to **${currentLevel.toUpperCase()}**! Keep pushing forward! 🚀`, 'ai-msg');
+            }
         }
 
         function generateQuiz() {
@@ -255,9 +277,9 @@ HTML_TEMPLATE = """
 
         function generateNextQuizAuto() {
             let difficulty = "Easy";
-            if (userScore >= 50) {
+            if (userScore >= 30) {
                 difficulty = "Expert/Hardcore (Scenario-based)";
-            } else if (userScore >= 30) {
+            } else if (userScore >= 20) {
                 difficulty = "Hard (In-depth Security & Commands)";
             } else if (userScore >= 10) {
                 difficulty = "Medium (Intermediate Concepts)";
@@ -283,6 +305,7 @@ HTML_TEMPLATE = """
             userScore = 0;
             isQuizActive = false;
             currentMode = 'chat';
+            previousLevel = 'Rookie';
             updateScoreAndLevel();
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = '<div class="message ai-msg">Chat cleared! Ask me anything about cybersecurity.</div>';
@@ -320,9 +343,9 @@ def chat():
         knowledge_context = load_knowledge_base()
         
         # Difficulty context based on score
-        if score >= 50:
+        if score >= 30:
             difficulty = "Expert/Hardcore Scenario-based"
-        elif score >= 30:
+        elif score >= 20:
             difficulty = "Hard Security & Tool Commands"
         elif score >= 10:
             difficulty = "Medium Concepts"
