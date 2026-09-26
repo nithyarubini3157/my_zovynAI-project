@@ -117,7 +117,7 @@ HTML_TEMPLATE = """
     <script>
         let chatHistory = [];
         let userScore = 0;
-        let isQuizActive = false;
+        let isQuizActive = false; // "Start Quiz" button control
         let allowAutoQuiz = false;
         let currentMode = 'chat';
         let previousLevel = 'Rookie';
@@ -157,9 +157,6 @@ HTML_TEMPLATE = """
 
         async function setQuizPreference(allow) {
             allowAutoQuiz = allow;
-            if (allow) {
-                isQuizActive = true;
-            }
             try {
                 await fetch('/set_quiz_preference', {
                     method: 'POST',
@@ -249,7 +246,9 @@ HTML_TEMPLATE = """
                                 userScore += 2; // +2 marks per question
                                 updateScoreAndLevel();
                             }
-                            if(isQuizActive && allowAutoQuiz) {
+                            
+                            // Continue continuous quiz ONLY if 'Start Quiz' button was explicitly activated
+                            if(isQuizActive) {
                                 setTimeout(() => { generateNextQuizAuto(); }, 2000);
                             }
                         }
@@ -275,7 +274,6 @@ HTML_TEMPLATE = """
 
             levelBadge.innerText = currentLevel;
 
-            // Trigger Confetti Blast and Motivational Banner on Level Promotion
             if(currentLevel !== previousLevel) {
                 previousLevel = currentLevel;
                 triggerConfetti();
@@ -284,7 +282,7 @@ HTML_TEMPLATE = """
         }
 
         function generateQuiz() {
-            isQuizActive = true;
+            isQuizActive = true; // Enables continuous quiz mode
             generateNextQuizAuto();
         }
 
@@ -316,7 +314,7 @@ HTML_TEMPLATE = """
         function clearChat() {
             chatHistory = [];
             userScore = 0;
-            isQuizActive = false;
+            isQuizActive = false; // Disable continuous quiz mode on clear
             currentMode = 'chat';
             previousLevel = 'Rookie';
             updateScoreAndLevel();
@@ -353,13 +351,11 @@ def chat():
         if not os.getenv("GEMINI_API_KEY"):
             return jsonify({"error": "GEMINI_API_KEY is missing in .env file!"}), 400
 
-        # Security Guardrail: Truncate long inputs to prevent Prompt Injection & Token Exhaustion
         if len(message) > 2000:
             message = message[:2000]
 
         knowledge_context = load_knowledge_base()
         
-        # Difficulty context based on score
         if score >= 30:
             difficulty = "Expert/Hardcore Scenario-based"
         elif score >= 20:
